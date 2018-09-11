@@ -4,7 +4,7 @@ import 'dart:ui';
 Widget createInputTextField({
   String fieldName,
   String histText,
-  ValueSetter<String> onSubmitted,
+  ValueSetter<String> onChanged,
   EdgeInsetsGeometry padding,
   TextStyle fieldNameStyle,
   TextStyle valueStyle,
@@ -32,7 +32,7 @@ Widget createInputTextField({
               child: TextField(
                 textAlign: TextAlign.right,
                 style: valueStyle,
-                onSubmitted: onSubmitted,
+                onChanged: onChanged,
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: histText,

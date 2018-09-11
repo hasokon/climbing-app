@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'GradeSelector.dart';
 import 'InputTextField4Log.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateClimbingLog extends StatefulWidget {
   @override
@@ -54,15 +55,28 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
   }
 
   void _selectPicture() async {
-    var image = await ImagePicker
-        .pickImage(source: ImageSource.gallery)
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery)
         .catchError((error) => debugPrint(error));
     setState(() {
       _image = image;
     });
   }
 
-  void _save() {
+  void _save() async {
+    if (this._placeName.isEmpty || this._problemName.isEmpty) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    final DocumentReference documentReference =
+        Firestore.instance.collection('climbing_logs').document();
+    documentReference.setData({
+      'date': _selectedDate,
+      'grade': _grade,
+      'place': _placeName,
+      'problem_name': _problemName,
+    });
+
     Navigator.of(context).pop();
   }
 
@@ -77,7 +91,7 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
     var place = createInputTextField(
         fieldName: '場所',
         histText: 'エリア名orジム名（必須）',
-        onSubmitted: _inputPlaceName,
+        onChanged: _inputPlaceName,
         padding: padding,
         fieldNameStyle: nameStyle,
         valueStyle: valueStyle,
@@ -86,7 +100,7 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
     var problemName = createInputTextField(
         fieldName: '課題名',
         histText: '無名',
-        onSubmitted: _inputProblemName,
+        onChanged: _inputProblemName,
         padding: padding,
         fieldNameStyle: nameStyle,
         valueStyle: valueStyle,
@@ -177,7 +191,7 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
               problemName,
               date,
               grade,
-              createImageSelector(),
+              // createImageSelector(),
             ],
           ),
         ));
