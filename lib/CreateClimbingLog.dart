@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'dart:async';
 import 'package:intl/intl.dart';
 import 'GradeSelector.dart';
 import 'InputTextField4Log.dart';
@@ -73,14 +74,18 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
 
     final DocumentReference documentReference =
         Firestore.instance.collection('climbing_logs').document();
+
+    // save image to storage
+    await _ref.child(documentReference.documentID).putFile(_image).future;
+    var url = await _ref.child(documentReference.documentID).getDownloadURL();
+
     documentReference.setData({
       'date': _selectedDate,
       'grade': _grade,
       'place': _placeName,
       'problem_name': _problemName,
+      'image_url': url.toString(),
     });
-
-    _ref.child(documentReference.documentID).putFile(_image);
 
     Navigator.of(context).pop();
   }
