@@ -25,5 +25,7 @@ Widget _buildGridView(
 }
 
 Widget _buildGriditem(BuildContext context, DocumentSnapshot document) {
-  return GridTile(key: ValueKey(document.documentID), child: Image.file());
+  return GridTile(key: ValueKey(document.documentID), child: Image.file(
+    FirebaseStorage.instance.ref().child(document.documentID).getData(maxSize)
+  ));
 }
