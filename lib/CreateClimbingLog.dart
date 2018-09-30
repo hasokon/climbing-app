@@ -5,6 +5,7 @@ import 'GradeSelector.dart';
 import 'InputTextField4Log.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class CreateClimbingLog extends StatefulWidget {
   @override
@@ -22,7 +23,9 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
 
   File _image = null;
 
-  DateFormat formatter = DateFormat('yyyy年MM月dd日');
+  DateFormat _formatter = DateFormat('yyyy年MM月dd日');
+
+  final StorageReference _ref = FirebaseStorage.instance.ref();
 
   void _selectDate() async {
     var date = await showDatePicker(
@@ -76,6 +79,8 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
       'place': _placeName,
       'problem_name': _problemName,
     });
+
+    _ref.child(documentReference.documentID).putFile(_image);
 
     Navigator.of(context).pop();
   }
@@ -135,7 +140,7 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
           ),
           FlatButton(
             child: Text(
-              "${formatter.format(_selectedDate)}",
+              "${_formatter.format(_selectedDate)}",
               style: valueStyle,
             ),
             onPressed: _selectDate,
@@ -191,7 +196,7 @@ class _CreateClimbingLog extends State<CreateClimbingLog> {
               problemName,
               date,
               grade,
-              // createImageSelector(),
+              createImageSelector(),
             ],
           ),
         ));
